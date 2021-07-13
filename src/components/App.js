@@ -9,6 +9,7 @@ import CurrentUserContext from '../contexts/CurrentUserContext.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 function App() {
 
@@ -118,20 +119,34 @@ function App() {
   }
 
   return (
+    
     <CurrentUserContext.Provider value={currentUser}>
+      
       <div className="App body-background">
         <div className="page-container">
-          <Header />
-          <Main
-            cards={cards}
-            onEditAvatar={handleEditAvatarClick}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-          />
-          <Footer />
+
+        <Switch>
+          <Route path='/main'>
+            <Header />
+            <Main
+              cards={cards}
+              onEditAvatar={handleEditAvatarClick}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onCardClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+            />        
+            <Footer />            
+          </Route>
+          
+          <Route path='/sign-up'>
+            <div >Страница авторизации</div>
+          </Route>
+          <Route path='/sign-in'>
+          <div >Страница логина</div>
+          </Route>
+          </Switch>
 
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
@@ -145,7 +160,8 @@ function App() {
 
         </div>
       </div>
-    </CurrentUserContext.Provider>
+      
+    </ CurrentUserContext.Provider>
   );
 }
 
