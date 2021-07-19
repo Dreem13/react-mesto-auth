@@ -4,15 +4,21 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
-import React from 'react';
+import React, { useState } from 'react';
 import CurrentUserContext from '../contexts/CurrentUserContext.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import Login from './Login.js';
+import Register from './Register.js';
+import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
+import * as auth from '../utils/auth.js';
 
 function App() {
 
+  const [email, setEmail] = useState('');
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
@@ -116,19 +122,83 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
+    setIsTooltipOpen(false);
   }
 
-  return (
-    
-    <CurrentUserContext.Provider value={currentUser}>
-      
+  const [isRegistrationSuccessful, setIsRegistrationSuccessful] = React.useState(true);
+  const [isTooltipOpen, setIsTooltipOpen] = React.useState(false);
+  const history = useHistory();
+
+  function onRegister(email, password) {
+        auth.register(email, password)
+            .then(() => {
+                setIsRegistrationSuccessful(true);
+                history.push('/sign-in');
+            })
+            .catch(() => setIsRegistrationSuccessful(false))
+            .then(() => setIsTooltipOpen(true));
+    }
+
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    const [userEmail, setUserEmail] = React.useState('');
+
+    function onLogin(email, password) {
+        auth.login(email, password)
+            .then(() => {
+                setIsLoggedIn(true);
+                history.push('/');
+
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+        updateUserEmail()
+    }
+
+    function updateUserEmail() {
+        let token = localStorage.getItem('jwt')
+        auth.checkToken(token)
+            .then((res) => {
+              setUserEmail(res.data.email)
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+    }
+
+    function handleSignOut() {
+        localStorage.removeItem('jwt');
+        setIsLoggedIn(false)
+    }
+
+    function onTokenCheck(token) {
+        auth.checkToken(token)
+            .then(res => {
+                console.log(res.data)
+                setIsLoggedIn(res.data != null)
+                setUserEmail(res.data.email)
+                history.push('/')
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+    }
+
+  return (    
+    <CurrentUserContext.Provider value={currentUser}>      
       <div className="App body-background">
         <div className="page-container">
-
+        <Header email={email} onSignOut={handleSignOut} />
         <Switch>
-          <Route path='/main'>
-            <Header />
-            <Main
+        <Route path='/sign-up'>
+            <Register onRegister={onRegister} />
+          </Route>
+          <Route path='/sign-in'>
+            <Login onLogin={onLogin} onTokenCheck={onTokenCheck} />
+          </Route>
+          <ProtectedRoute exact path="/"
+              isLoggedIn={isLoggedIn}
+              component={Main} 
               cards={cards}
               onEditAvatar={handleEditAvatarClick}
               onEditProfile={handleEditProfileClick}
@@ -136,18 +206,10 @@ function App() {
               onCardClick={handleCardClick}
               onCardLike={handleCardLike}
               onCardDelete={handleCardDelete}
-            />        
-            <Footer />            
-          </Route>
-          
-          <Route path='/sign-up'>
-            <div >Страница авторизации</div>
-          </Route>
-          <Route path='/sign-in'>
-          <div >Страница логина</div>
-          </Route>
+            >         
+          </ProtectedRoute>         
           </Switch>
-
+          <Footer /> 
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
@@ -158,9 +220,9 @@ function App() {
 
           <PopupWithForm name="delete" title="Вы уверены?" placeholder="Да" />
 
+          <InfoTooltip isOpen={isTooltipOpen} isSuccess={isRegistrationSuccessful} onClose={closeAllPopups} />
         </div>
-      </div>
-      
+      </div>      
     </ CurrentUserContext.Provider>
   );
 }
