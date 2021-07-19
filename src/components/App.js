@@ -130,75 +130,74 @@ function App() {
   const history = useHistory();
 
   function onRegister(email, password) {
-        auth.register(email, password)
-            .then(() => {
-                setIsRegistrationSuccessful(true);
-                history.push('/sign-in');
-            })
-            .catch(() => setIsRegistrationSuccessful(false))
-            .then(() => setIsTooltipOpen(true));
-    }
+    auth.register(email, password)
+      .then(() => {
+        setIsRegistrationSuccessful(true);
+        history.push('/sign-in');
+      })
+      .catch(() => setIsRegistrationSuccessful(false))
+      .then(() => setIsTooltipOpen(true));
+  }
 
-    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    const [userEmail, setUserEmail] = React.useState('');
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [userEmail, setUserEmail] = React.useState('');
 
-    function onLogin(email, password) {
-        auth.login(email, password)
-            .then(() => {
-                setIsLoggedIn(true);
-                history.push('/');
+  function onLogin(email, password) {
+    auth.login(email, password)
+      .then(() => {
+        setIsLoggedIn(true);
+        history.push('/');
 
-            })
-            .catch((error) => {
-              console.log(error);
-            })
-        updateUserEmail()
-    }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    updateUserEmail()
+  }
 
-    function updateUserEmail() {
-        let token = localStorage.getItem('jwt')
-        auth.checkToken(token)
-            .then((res) => {
-              setUserEmail(res.data.email)
-            })
-            .catch((error) => {
-              console.log(error);
-            })
-    }
+  function updateUserEmail() {
+    let token = localStorage.getItem('jwt')
+    auth.checkToken(token)
+      .then((res) => {
+        setUserEmail(res.data.email)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
-    function handleSignOut() {
-        localStorage.removeItem('jwt');
-        setIsLoggedIn(false)
-    }
+  function handleSignOut() {
+    localStorage.removeItem('jwt');
+    setIsLoggedIn(false)
+  }
 
-    function onTokenCheck(token) {
-        auth.checkToken(token)
-            .then(res => {
-                console.log(res.data)
-                setIsLoggedIn(res.data != null)
-                setUserEmail(res.data.email)
-                history.push('/')
-            })
-            .catch((error) => {
-              console.log(error);
-            })
-    }
+  function onTokenCheck(token) {
+    auth.checkToken(token)
+      .then(res => {
+        setIsLoggedIn(res.data != null)
+        setUserEmail(res.data.email)
+        history.push('/')
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
-  return (    
-    <CurrentUserContext.Provider value={currentUser}>      
+  return (
+    <CurrentUserContext.Provider value={currentUser}>
       <div className="App body-background">
         <div className="page-container">
-        <Header email={email} onSignOut={handleSignOut} />
-        <Switch>
-        <Route path='/sign-up'>
-            <Register onRegister={onRegister} />
-          </Route>
-          <Route path='/sign-in'>
-            <Login onLogin={onLogin} onTokenCheck={onTokenCheck} />
-          </Route>
-          <ProtectedRoute exact path="/"
+          <Header email={email} onSignOut={handleSignOut} />
+          <Switch>
+            <Route path='/sign-up'>
+              <Register onRegister={onRegister} />
+            </Route>
+            <Route path='/sign-in'>
+              <Login onLogin={onLogin} onTokenCheck={onTokenCheck} />
+            </Route>
+            <ProtectedRoute exact path="/"
               isLoggedIn={isLoggedIn}
-              component={Main} 
+              component={Main}
               cards={cards}
               onEditAvatar={handleEditAvatarClick}
               onEditProfile={handleEditProfileClick}
@@ -206,10 +205,10 @@ function App() {
               onCardClick={handleCardClick}
               onCardLike={handleCardLike}
               onCardDelete={handleCardDelete}
-            >         
-          </ProtectedRoute>         
+            >
+            </ProtectedRoute>
           </Switch>
-          <Footer /> 
+          <Footer />
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
@@ -222,7 +221,7 @@ function App() {
 
           <InfoTooltip isOpen={isTooltipOpen} isSuccess={isRegistrationSuccessful} onClose={closeAllPopups} />
         </div>
-      </div>      
+      </div>
     </ CurrentUserContext.Provider>
   );
 }
