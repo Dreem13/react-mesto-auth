@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 function Login(props) {
 
-  const [userAuthorisation, setUserAuthorisation] = useState({ email: "", password: "" });
-
+  const [userAuthorisation, setUserAuthorisation] = useState({ email: '', password: ''});  
+  
   useEffect(() => {
     const token = localStorage.getItem('jwt')
     if (token === null) { return }
@@ -17,7 +17,7 @@ function Login(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    const { email, password } = userAuthorisation;
+    const { email, password } = userAuthorisation
     if (!email || !password) {
       return;
     }
@@ -28,10 +28,8 @@ function Login(props) {
     <div className="login">
       <h2 className="login__title">Вход</h2>
       <form className="login__form" onSubmit={handleSubmit}>
-        <input type="email" className="login__input login__input_email" placeholder="Email" name="email" type="email" value={userAuthorisation.email} onChange={handleChange}
-          required></input>
-        <input type="password" className="login__input login__input_password" name="password" type="password" placeholder="Пароль" value={userAuthorisation.password} onChange={handleChange}
-          required></input>
+        <input type="email" className="login__input login__input_email" placeholder="Email" name="email" type="email" value={userAuthorisation.email} onChange={handleChange} required></input>
+        <input type="password" className="login__input login__input_password" name="password" type="password" placeholder="Пароль" value={userAuthorisation.password} onChange={handleChange} required></input>
         <button type="submit" className="login__button">Войти</button>
       </form>
     </div>

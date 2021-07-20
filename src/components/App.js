@@ -4,7 +4,7 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
-import React, { useState } from 'react';
+import React from 'react';
 import CurrentUserContext from '../contexts/CurrentUserContext.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
@@ -18,7 +18,6 @@ import * as auth from '../utils/auth.js';
 
 function App() {
 
-  const [email, setEmail] = useState('');
   const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
@@ -138,9 +137,22 @@ function App() {
       .catch(() => setIsRegistrationSuccessful(false))
       .then(() => setIsTooltipOpen(true));
   }
+  
+  const [userEmail, setUserEmail] = React.useState('');
+  console.log(userEmail)
+
+  function updateUserEmail() {
+    let token = localStorage.getItem('jwt')
+    auth.checkToken(token)
+      .then((res) => {
+        setUserEmail(res.data.email)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [userEmail, setUserEmail] = React.useState('');
 
   function onLogin(email, password) {
     auth.login(email, password)
@@ -153,18 +165,7 @@ function App() {
         console.log(error);
       })
     updateUserEmail()
-  }
-
-  function updateUserEmail() {
-    let token = localStorage.getItem('jwt')
-    auth.checkToken(token)
-      .then((res) => {
-        setUserEmail(res.data.email)
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-  }
+  }  
 
   function handleSignOut() {
     localStorage.removeItem('jwt');
@@ -187,14 +188,17 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App body-background">
         <div className="page-container">
-          <Header email={email} onSignOut={handleSignOut} />
+          <Header userEmail={userEmail} onSignOut={handleSignOut} />
           <Switch>
+
             <Route path='/sign-up'>
               <Register onRegister={onRegister} />
             </Route>
+
             <Route path='/sign-in'>
               <Login onLogin={onLogin} onTokenCheck={onTokenCheck} />
             </Route>
+
             <ProtectedRoute exact path="/"
               isLoggedIn={isLoggedIn}
               component={Main}
@@ -205,7 +209,8 @@ function App() {
               onCardClick={handleCardClick}
               onCardLike={handleCardLike}
               onCardDelete={handleCardDelete}
-            >
+            >            
+
             </ProtectedRoute>
           </Switch>
           <Footer />
