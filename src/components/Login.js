@@ -4,12 +4,6 @@ function Login(props) {
 
   const [userAuthorisation, setUserAuthorisation] = useState({ email: '', password: ''});  
   
-  useEffect(() => {
-    const token = localStorage.getItem('jwt')
-    if (token === null) { return }
-    props.onTokenCheck(token)
-  });
-
   function handleChange(e) {
     const { name, value } = e.target;
     setUserAuthorisation({ ...userAuthorisation, [name]: value })

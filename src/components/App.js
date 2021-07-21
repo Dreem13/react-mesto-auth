@@ -23,8 +23,10 @@ function App() {
   React.useEffect(() => {
     api.getCards()
       .then((res) => { setCards(res) })
-      .catch((error) => console.log(error))
-  }, []
+      .catch((error) => {
+        console.log(error);
+      }
+    )}, []
   );
 
   function handleCardLike(card) {
@@ -32,7 +34,10 @@ function App() {
 
     api.like(card._id, isLiked).then((newCard) => {
       setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
-    });
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
 
   function handleCardDelete(card) {
@@ -50,7 +55,9 @@ function App() {
   React.useEffect(() => {
     api.getUserInfo()
       .then((res) => { setCurrentUser(res) })
-      .catch((error) => console.log(error))
+      .catch((error) => {
+        console.log(error);
+      })
   }, []
   );
 
@@ -91,7 +98,7 @@ function App() {
         setIsAddPlacePopupOpen(false)
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       })
   }
 
@@ -139,40 +146,16 @@ function App() {
   }
   
   const [userEmail, setUserEmail] = React.useState('');
-  console.log(userEmail)
-
-  function updateUserEmail() {
-    let token = localStorage.getItem('jwt')
-    auth.checkToken(token)
-      .then((res) => {
-        setUserEmail(res.data.email)
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-  }
+  
+  React.useEffect(() => {
+    const token = localStorage.getItem('jwt')
+    if (token === null) { return }
+    onTokenCheck(token)
+  });
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
-  function onLogin(email, password) {
-    auth.login(email, password)
-      .then(() => {
-        setIsLoggedIn(true);
-        history.push('/');
-
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-    updateUserEmail()
-  }  
-
-  function handleSignOut() {
-    localStorage.removeItem('jwt');
-    setIsLoggedIn(false)
-  }
-
-  function onTokenCheck(token) {
+  function onTokenCheck(token) { 
     auth.checkToken(token)
       .then(res => {
         setIsLoggedIn(res.data != null)
@@ -183,6 +166,23 @@ function App() {
         console.log(error);
       })
   }
+
+  function onLogin(email, password) {
+    auth.login(email, password)
+      .then(() => {
+        setIsLoggedIn(true);
+        history.push('/');
+        onTokenCheck();
+      })
+      .catch((error) => {
+        console.log(error);
+      })    
+  }  
+
+  function handleSignOut() {
+    localStorage.removeItem('jwt');
+    setIsLoggedIn(false)
+  } 
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
