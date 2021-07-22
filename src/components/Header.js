@@ -3,8 +3,7 @@ import logo from '../images/logo_w.svg';
 import { Route, Switch, Link } from 'react-router-dom';
 
 
-function Header(props) {
-    console.log(props)
+function Header(props) {   
 
     return (
         <header className="header">

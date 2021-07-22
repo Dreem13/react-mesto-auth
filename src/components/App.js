@@ -62,7 +62,6 @@ function App() {
   );
 
   function handleUpdateUser(data) {
-
     api.setUserInfo(data)
       .then((res) => {
         setCurrentUser(res);
@@ -76,7 +75,6 @@ function App() {
   }
 
   function handleUpdateAvatar(data) {
-
     api.updateAvatar(data)
       .then((res) => {
         setCurrentUser(res);

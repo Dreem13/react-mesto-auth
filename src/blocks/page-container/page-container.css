@@ -4,4 +4,5 @@
     background-color: black;
     min-width: 300px;
     max-width: 882px;
+    min-height: 100vh;
 }
