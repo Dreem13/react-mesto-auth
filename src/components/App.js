@@ -117,8 +117,7 @@ function App() {
     setIsAddPlacePopupOpen(true);
   }
 
-  const [selectedCard, setSelectedCard] = React.useState(null);
-
+  const [selectedCard, setSelectedCard] = React.useState(false);
   function handleCardClick(cardData) {
     setSelectedCard(cardData);
   }
@@ -127,7 +126,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
-    setSelectedCard(null);
+    setSelectedCard(false);
     setIsTooltipOpen(false);
   }
 
@@ -151,7 +150,8 @@ function App() {
     const token = localStorage.getItem('jwt')
     if (token === null) { return }
     onTokenCheck(token)
-  });
+  }, []
+  );
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 

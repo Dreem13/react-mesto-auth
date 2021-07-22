@@ -25,9 +25,13 @@ function Card(props) {
     props.onCardDelete(props.card);
   }
 
+  function handleCardClick () {
+    props.onClick(props.card);
+  }
+
   return (
     <div className="elements__card">
-      <img className="elements__image" src={props.card.link} alt={`фотография ${props.card.name}`} />
+      <img className="elements__image" src={props.card.link} alt={`фотография ${props.card.name}`} onClick={handleCardClick}/>
       <div className="elements__title-wrapper">
         <h2 className="elements__title">{props.card.name}</h2>
         <div className="elements__like">
