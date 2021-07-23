@@ -149,7 +149,8 @@ function App() {
     const token = localStorage.getItem('jwt')
     if (token === null) { return }
     onTokenCheck(token)
-  });
+  }, []
+  );
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
