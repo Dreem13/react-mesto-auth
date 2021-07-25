@@ -29,7 +29,11 @@ function Card(props) {
 
   return (
     <div className="elements__card">
+<<<<<<< HEAD
       <img className="elements__image" src={props.card.link} alt={`фотография ${props.card.name}`} onClick={handleCardClick} />
+=======
+      <img className="elements__image" src={props.card.link} alt={`фотография ${props.card.name}`} onClick={handleCardClick}/>
+>>>>>>> gh-pages
       <div className="elements__title-wrapper">
         <h2 className="elements__title">{props.card.name}</h2>
         <div className="elements__like">
